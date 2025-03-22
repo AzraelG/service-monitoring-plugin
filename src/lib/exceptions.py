@@ -8,3 +8,7 @@ Classes:
 
 class HttpDriverException(Exception):
     """Exception raised for errors occurring in the HttpDriver."""
+
+
+class ServiceNotFoundError(Exception):
+    """Custom exception for unknown services."""

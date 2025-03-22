@@ -29,7 +29,7 @@ class HttpDriver():
 
     def __init__(self) -> None:
         self.timeout = Config.HTTP_TIMEOUT
-        self.log = logging.getLogger('http_driver')
+        self.log = logging.getLogger(__name__)
 
     def request(self, method, url, **kwargs) -> requests.Response:
         """
