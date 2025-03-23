@@ -10,14 +10,14 @@ class BaseService():
         self.driver = driver()
         self.base_endpoint = base_endpoint
         self.user = user
-        self.passwor = password
+        self.password = password
 
-    def check(self):
+    def get_status(self):
         """
         Each subclass must implement this method.
         """
         raise NotImplementedError(
-            "Subclasses must implement the check() method")
+            "Subclasses must implement the get_status() method")
 
     @classmethod
     def get_service(cls, service_name):

@@ -3,5 +3,5 @@ from src.services.base_service import BaseService
 
 class LogstashService(BaseService):
 
-    def check(self):
+    def get_status(self):
         print("logstash")

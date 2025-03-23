@@ -3,5 +3,5 @@ from src.services.base_service import BaseService
 
 class KibanaService(BaseService):
 
-    def check(self):
+    def get_status(self):
         print("kibana")

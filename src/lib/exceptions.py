@@ -7,8 +7,18 @@ Classes:
 
 
 class HttpDriverException(Exception):
-    """Exception raised for errors occurring in the HttpDriver."""
+    """
+    Exception raised for errors occurring in the HttpDriver.
+    """
 
 
 class ServiceNotFoundError(Exception):
-    """Custom exception for unknown services."""
+    """
+    Custom exception for unknown services.
+    """
+
+
+class InvalidNagiosStateError(Exception):
+    """
+    Raised when an invalid Nagios state is encountered during a health check.
+    """
