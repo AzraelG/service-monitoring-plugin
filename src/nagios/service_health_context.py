@@ -33,7 +33,7 @@ class ServiceHealthContext(nagiosplugin.Context):
         """
         if self.custom_description is not None:
             return self.custom_description
-        return state_messages.get(metric.value, "Unexpected service status!")
+        return state_messages.get(metric.value, "No status available")
 
     def performance(self, metric, resource):
         """
