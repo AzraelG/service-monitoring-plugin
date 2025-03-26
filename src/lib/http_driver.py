@@ -16,6 +16,10 @@ import logging
 import requests
 from src.lib.config import Config
 from src.lib.exceptions import HttpDriverException
+from src.lib.exceptions import HttpConnectionError
+from src.lib.exceptions import HttpTimeoutError
+from src.lib.exceptions import HttpStatusError
+from src.lib.exceptions import HttpUnexpectedError
 
 
 class HttpDriver():
@@ -53,9 +57,32 @@ class HttpDriver():
         self.log.debug("Body: %s", data)
         try:
             response = requests.request(method, url, **kwargs)
+            response.raise_for_status()
+
         except requests.exceptions.ConnectionError as e:
             self.log.error(e)
-            raise HttpDriverException(
+            raise HttpConnectionError(
                 "Error trying to connect to HTTP server") from e
+
+        except requests.exceptions.Timeout as e:
+            self.log.error("Request timeout: %s", str(e))
+            raise HttpTimeoutError("Request timed out") from e
+
+        except requests.exceptions.HTTPError as e:
+            if e.response is not None:  # Ensure response exists before accessing
+                self.log.error("HTTP error (%d): %s",
+                               e.response.status_code, e.response.text)
+                if e.response.status_code == 401:
+                    raise HttpStatusError("Authentication failed") from e
+                raise HttpStatusError(
+                    f"HTTP error occurred: {e.response.status_code}") from e
+            else:
+                self.log.error("HTTP error occurred with no response details.")
+                raise HttpDriverException("HTTP error occurred") from e
+
+        except requests.exceptions.RequestException as e:
+            self.log.error("Unexpected request error: %s", str(e))
+            raise HttpUnexpectedError(f"Unexpected error: {str(e)}") from e
+
         self.log.debug("Response: %s", response.text)
         return response

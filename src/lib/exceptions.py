@@ -17,7 +17,37 @@ Classes:
 
 class HttpDriverException(Exception):
     """
-    Exception raised for errors occurring in the HttpDriver.
+    Base class for all HTTP driver related errors.
+    """
+
+
+class HttpConnectionError(HttpDriverException):
+    """
+    Raised when a connection error occurs.
+    """
+
+
+class HttpTimeoutError(HttpDriverException):
+    """
+    Raised when a timeout occurs.
+    """
+
+
+class HttpAuthenticationError(HttpDriverException):
+    """
+    Raised when authentication fails (e.g., 401).
+    """
+
+
+class HttpStatusError(HttpDriverException):
+    """
+    Raised when an HTTP error occurs (e.g., 4xx, 5xx status codes).
+    """
+
+
+class HttpUnexpectedError(HttpDriverException):
+    """
+    Raised for any other unexpected HTTP errors.
     """
 
 

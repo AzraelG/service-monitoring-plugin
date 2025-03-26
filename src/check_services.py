@@ -1,6 +1,6 @@
 import nagiosplugin
 from src.services.base_service import BaseService
-from src.services.elastic_search_service import ElasticSearchService
+from services.elasticsearch_service import ElasticsearchService
 from src.services.kibana_service import KibanaService
 from src.services.logstash_service import LogstashService
 from src.nagios.service_health_resource import ServiceHealthResource
