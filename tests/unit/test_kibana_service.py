@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import requests
-from src.services.elasticsearch_service import ElasticsearchService
+from src.services.kibana_service import KibanaService
 from src.lib.exceptions import HttpDriverException
 from src.lib.exceptions import InvalidHealthStatusError
 from src.lib.exceptions import StatusFormatError
@@ -10,25 +10,29 @@ from src.lib.exceptions import StatusFormatError
 @pytest.mark.parametrize(
     "response_status, expected_health_status",
     [
-        ("green", "OK"),
-        ("yellow", "WARNING"),
-        ("red", "CRITICAL"),
-        ("unknown", "UNKNOWN"),
+        ("available", "OK"),
+        ("degraded", "WARNING"),
+        ("critical", "CRITICAL"),
+        ("unavailable", "UNKNOWN"),
     ]
 )
 @patch("src.lib.http_driver.requests.request")
 def test_get_status_valid(mock_request, response_status, expected_health_status):
+    """
+    Test valid health statuses.
+    """
     mock_response = MagicMock()
-    mock_response.json.return_value = {"status": response_status}
+    mock_response.json.return_value = {
+        "status": {"overall": {"level": response_status}}}
     mock_request.return_value = mock_response
 
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
     status = service.get_status()
     assert status == expected_health_status
+
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )
 
 
@@ -42,17 +46,21 @@ def test_get_status_valid(mock_request, response_status, expected_health_status)
 )
 @patch("src.lib.http_driver.requests.request")
 def test_get_status_error_handling(mock_request, exception, expected_message):
+    """
+    Test handling of connection errors and timeouts.
+    """
     mock_request.side_effect = exception
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
 
     with pytest.raises(HttpDriverException) as excinfo:
         service.get_status()
 
     assert str(excinfo.value) == expected_message
+
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )
 
 
@@ -73,19 +81,18 @@ def test_get_status_authentication_failure(mock_request, status_code, expected_m
     mock_response.json.return_value = {"message": "Unauthorized"}
     mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(
         response=mock_response)
-
     mock_request.return_value = mock_response
 
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
 
     with pytest.raises(HttpDriverException) as excinfo:
         service.get_status()
 
     assert str(excinfo.value) == expected_message
+
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )
 
 
@@ -98,15 +105,14 @@ def test_get_status_invalid_response(mock_request):
     mock_response.json.return_value = {}
     mock_request.return_value = mock_response
 
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
 
     with pytest.raises(InvalidHealthStatusError):
         service.get_status()
 
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )
 
 
@@ -125,18 +131,18 @@ def test_get_status_invalid_status_format(mock_request, invalid_status):
     Test handling of a response where the "status" value is None or not a string.
     """
     mock_response = MagicMock()
-    mock_response.json.return_value = {"status": invalid_status}
+    mock_response.json.return_value = {
+        "status": {"overall": {"level": invalid_status}}}
     mock_request.return_value = mock_response
 
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
 
     with pytest.raises(StatusFormatError):
         service.get_status()
 
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )
 
 
@@ -146,16 +152,16 @@ def test_get_status_unexpected_health_status(mock_request):
     Test how the service handles an unexpected health status value.
     """
     mock_response = MagicMock()
-    mock_response.json.return_value = {"status": "blue"}
+    mock_response.json.return_value = {
+        "status": {"overall": {"level": "random_status"}}}
     mock_request.return_value = mock_response
 
-    service = ElasticsearchService(
-        user="user", password="password", base_endpoint="http://localhost:9200"
-    )
+    service = KibanaService(user="user", password="password",
+                            base_endpoint="http://localhost:5601")
 
     with pytest.raises(InvalidHealthStatusError):
         service.get_status()
 
     mock_request.assert_called_once_with(
-        "GET", "http://localhost:9200/_health_report", auth=("user", "password"), verify=False, timeout=5
+        "GET", "http://localhost:5601/api/status", auth=("user", "password"), verify=False, timeout=5
     )

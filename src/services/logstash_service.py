@@ -23,12 +23,12 @@ class LogstashService(BaseService):
             response = self.driver.request("GET", endpoint, auth=(
                 self.user, self.password), verify=False)
             data = response.json()
-            cpu_usage = data["process"]["cpu"]["percent"]
-            if cpu_usage < 70:
+            cpu_usage = int(data["process"]["cpu"]["percent"])
+            if (cpu_usage < 70):
                 health_status = HealthStatus.OK
-            elif 70 <= cpu_usage < 85:
+            elif (70 <= cpu_usage < 85):
                 health_status = HealthStatus.WARNING
-            elif cpu_usage >= 85:
+            elif (cpu_usage >= 85):
                 health_status = HealthStatus.CRITICAL
             else:
                 self.log.warning("Invalid CPU usage value: %s", cpu_usage)
@@ -39,3 +39,15 @@ class LogstashService(BaseService):
             self.log.error("Error processing health data, missing key: %s", e)
             raise InvalidHealthStatusError(
                 f"Invalid health status data, missing key: {e}") from e
+
+        except ValueError as e:
+            self.log.error("Invalid CPU usage value: %s",
+                           data["process"]["cpu"].get("percent"))
+            raise InvalidHealthStatusError(
+                f"Invalid CPU usage value: {e}") from e
+
+        except TypeError as e:
+            self.log.error("Invalid CPU usage value: %s",
+                           data["process"]["cpu"].get("percent"))
+            raise InvalidHealthStatusError(
+                f"Invalid CPU usage value: {e}") from e
