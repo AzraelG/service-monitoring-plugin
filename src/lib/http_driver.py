@@ -20,6 +20,7 @@ from src.lib.exceptions import HttpConnectionError
 from src.lib.exceptions import HttpTimeoutError
 from src.lib.exceptions import HttpStatusError
 from src.lib.exceptions import HttpUnexpectedError
+from src.lib.exceptions import HttpAuthenticationError
 
 
 class HttpDriver():
@@ -69,11 +70,12 @@ class HttpDriver():
             raise HttpTimeoutError("Request timed out") from e
 
         except requests.exceptions.HTTPError as e:
-            if e.response is not None:  # Ensure response exists before accessing
+            if e.response is not None:
                 self.log.error("HTTP error (%d): %s",
                                e.response.status_code, e.response.text)
                 if e.response.status_code == 401:
-                    raise HttpStatusError("Authentication failed") from e
+                    raise HttpAuthenticationError(
+                        "Authentication failed") from e
                 raise HttpStatusError(
                     f"HTTP error occurred: {e.response.status_code}") from e
             else:

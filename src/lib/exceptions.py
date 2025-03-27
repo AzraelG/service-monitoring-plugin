@@ -6,7 +6,6 @@ Classes:
     - ServiceError: Base exception for all service-related errors.
     - InvalidHealthStatusError: Raised when an invalid health status is received.
     - StatusFormatError: Raised when the status format is incorrect (None or not a string).
-    - ServiceRequestError: Raised when an HTTP request to a service fails.
     - ServiceNotFoundError: Raised when an unknown service is encountered.
     - NagiosError: Base exception for all Nagios-related errors.
     - InvalidNagiosStateError: Raised when an invalid Nagios state is encountered.
@@ -68,12 +67,6 @@ class InvalidHealthStatusError(ServiceError):
 class StatusFormatError(ServiceError):
     """
     Raised when the status format is incorrect (None or not a string).
-    """
-
-
-class ServiceRequestError(ServiceError):
-    """
-    Raised when an HTTP request to a service fails.
     """
 
 

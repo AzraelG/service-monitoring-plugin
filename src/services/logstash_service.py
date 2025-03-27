@@ -1,8 +1,6 @@
 from enum import Enum
 from src.services.base_service import BaseService
-from src.lib.exceptions import HttpDriverException
 from src.lib.exceptions import InvalidHealthStatusError
-from src.lib.exceptions import ServiceRequestError
 
 STATUS_CHECK_ENDPOINT = "/_node/stats/process"
 

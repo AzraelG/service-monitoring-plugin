@@ -1,37 +1,73 @@
+import click
+import logging
 import nagiosplugin
 from src.services.base_service import BaseService
-from services.elasticsearch_service import ElasticsearchService
+from src.services.elasticsearch_service import ElasticsearchService
 from src.services.kibana_service import KibanaService
 from src.services.logstash_service import LogstashService
 from src.nagios.service_health_resource import ServiceHealthResource
 from src.nagios.service_health_context import ServiceHealthContext
-from src.lib.exceptions import ServiceRequestError
+from src.lib.exceptions import (
+    HttpConnectionError,
+    HttpTimeoutError,
+    HttpAuthenticationError,
+    HttpStatusError,
+    HttpUnexpectedError,
+)
 
 
-service_name = "elasticsearch"
-user = "pippo"
-password = "secret"
-base_endpoint = "https://putoelquelee"
+log = logging.getLogger(__name__)
 
-if __name__ == "__main__":
 
-    service_class = BaseService.get_service(service_name)
-    service = service_class(user=user, password=password,
-                            base_endpoint=base_endpoint)
+@click.command()
+@click.option('--check', required=True, type=click.Choice(['elasticsearch', 'kibana', 'logstash']),
+              help='Specify the service to check.')
+@click.option('--host', required=True, help='Service endpoint.')
+@click.option('--user', required=True, help='Username for authentication.')
+@click.option('--password', required=True, hide_input=True, help='Password for authentication.')
+def check_service(check, host, user, password):
+    """
+    Check the health status of a given service and return a Nagios-compatible output.
+    """
+    service_class = BaseService.get_service(check)
+    service = service_class(user=user, password=password, base_endpoint=host)
     custom_description = None
-    try:
-        # service_status = service.get_status()
-        service_status = "OK"
 
-    except ServiceRequestError as e:
+    try:
+        service_status = service.get_status()
+
+    except HttpConnectionError as e:
+        log.error("Connection Error: %s", e)
         service_status = "UNKNOWN"
-        custom_description = "Connection Error"
+        custom_description = "Unable to connect to the service."
+
+    except HttpTimeoutError as e:
+        log.error("Timeout Error: %s", e)
+        service_status = "UNKNOWN"
+        custom_description = "Service request timed out."
+
+    except HttpAuthenticationError as e:
+        log.error("Authentication Error: %s", e)
+        service_status = "UNKNOWN"
+        custom_description = "Authentication failed for the service."
+
+    except HttpStatusError as e:
+        log.error("HTTP Status Error: %s", e)
+        service_status = "UNKNOWN"
+        custom_description = "An HTTP status error occurred."
+
+    except HttpUnexpectedError as e:
+        log.error("Unexpected Error: %s", e)
+        service_status = "UNKNOWN"
+        custom_description = "An unexpected error occurred."
 
     check = nagiosplugin.Check(
-        ServiceHealthResource(
-            service_status),
-        ServiceHealthContext('service_health',
-                             custom_description)
+        ServiceHealthResource(service_status),
+        ServiceHealthContext('service_health', custom_description)
     )
     check.name = ''
     check.main()
+
+
+if __name__ == "__main__":
+    check_service()
