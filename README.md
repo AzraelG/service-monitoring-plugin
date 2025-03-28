@@ -66,9 +66,12 @@ pytest tests/unit
 To integrate with **Icinga2**, add a custom command definition:
 ```sh
 object CheckCommand "service_health" {
-    command = [ "/usr/bin/python3", "/path/to/check_services.py" ]
+    command = [ "/usr/bin/python3", "/path/to/service-monitoring-plugin/src/check_services.py" ]
     arguments = {
         "--service" = "$service_name$"
+        "--endpoint" = "$service_endpoint$"
+        "--user" = "$service_user$"
+        "--password" = "$service_password$"
     }
 }
 ```
