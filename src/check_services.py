@@ -8,7 +8,7 @@ errors, timeouts, authentication errors, HTTP status errors, and unexpected erro
 
 Usage:
     $ python check_service.py --check <service> 
-                              --host <hostname> 
+                              --endpoint <endpoing> 
                               --user <username> 
                               --password <password>
 
@@ -42,15 +42,16 @@ log = logging.getLogger(__name__)
 @click.command()
 @click.option('--check', required=True, type=click.Choice(['elasticsearch', 'kibana', 'logstash']),
               help='Specify the service to check.')
-@click.option('--host', required=True, help='Service endpoint.')
+@click.option('--endpoint', required=True, help='Service endpoint.')
 @click.option('--user', required=True, help='Username for authentication.')
 @click.option('--password', required=True, hide_input=True, help='Password for authentication.')
-def check_service(check, host, user, password):
+def check_service(check, endpoint, user, password):
     """
     Check the health status of a given service and return a Nagios-compatible output.
     """
     service_class = BaseService.get_service(check)
-    service = service_class(user=user, password=password, base_endpoint=host)
+    service = service_class(
+        user=user, password=password, base_endpoint=endpoint)
     custom_description = None
 
     try:
