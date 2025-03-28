@@ -11,43 +11,9 @@ The **Service Monitoring Plugin** is a Python-based monitoring tool for checking
 - Supports **Icinga2 integration** for automated checks.
 - Includes **unit tests** for robust reliability.
 
-## Project Structure
+## General structure
 
-```
-service-monitoring-plugin
-├── LICENSE
-├── src
-│   ├── check_services.py
-│   ├── __init__.py
-│   ├── lib
-│   │   ├── config.py
-│   │   ├── exceptions.py
-│   │   ├── http_driver.py
-│   │   ├── __init__.py
-│   │   ├── logging_config.py
-│   ├── nagios
-│   │   ├── __init__.py
-│   │   ├── service_health_context.py
-│   │   ├── service_health_resource.py
-│   ├── README.md
-│   └── services
-│       ├── base_service.py
-│       ├── elasticsearch_service.py
-│       ├── __init__.py
-│       ├── kibana_service.py
-│       ├── logstash_service.py
-└── tests
-    └── unit
-        ├── conftest.py
-        ├── test_base_service.py
-        ├── test_check_services.py
-        ├── test_elasticsearch_service.py
-        ├── test_http_driver.py
-        ├── test_kibana_service.py
-        ├── test_logstash_service.py
-        ├── test_nagios_service_health_context.py
-        ├── test_nagios_service_health_resource.py
-```
+![Service Monitoring Plugin Diagram](https://mermaid.ink/img/pako:eNqVVF1v2jAU_SuWkfYUUEjAhDzsoYC0amyaBk8jfTCOnVgNMbKdbh3qf69NTDAVdJ0fomvfc47vh28OkIicwhSySvwmJZYarOdZDcxSzbaQeF-CDCoqnzih_Z2ouRaS10V_XzUFrzPYYu3KuaREc1GD9d35dLa832TQfMF9ralkmNAMPpz9Z8u77w4rClbtpf4Vl9csf156LMuRNm81Hi6hX9brH3PJn6g0SLsB7e4CSOv8WpzfqJacKEN0FpiJqmpj-ndqiworzQlYaUweP57bYrXpuIpiScqbuX3lW1xjA2-Nm7ilKJTGqjTIk3kVe6MMXk5MyB3W2pbvo_l8xwUXtoatATyJa1d3Rvu1z6nf_-x3vHV4B0fAYgU-uYIY45Rmi73uO9JcY1vcqcvW0Ubrh0JMT9ScMuBmxKTCqyrtTWMymuSB0lI80rSHME5GLCCiEjLthcf1RsANl-MjhpOcdPw4T8YEvcvfmtxdEE6DhsisToMQy3pXo9R6nx8nwUmwEUb4vyRIxWeN0mLnFLZswti4U0gMI7mq4OmY3gRtZ4KuL6f6-jDXmsA9IldBH-E_CK9APuT8L_DS9wH2tXVZwQDuqHmrPDc_zYOFZVCXdGdmJjVmThluKm0H4cVAcaPF6rkmMNWyoQGUoilKmDJcKbNr9jnWdM6xGaTdCbLH9S8h_C1MD_APTONBiIZhHMXRMB5O0XQSwGdzOhlEw3CMomkcoxEKo5cA_j3yw0GCpnaNxkMUTyKUvLwCtIbKJQ)
 
 ## Dependencies
 
@@ -55,6 +21,7 @@ This project uses the following Python libraries:
 - **[`nagiosplugin`](https://pypi.org/project/nagiosplugin/)** – Nagios-compatible exit codes.
 - **[`requests`](https://pypi.org/project/requests/)** – HTTP API calls.
 - **[`click`](https://pypi.org/project/click/)** – CLI support.
+- **[`pytest`](https://pypi.org/project/pytest/)** – Testing framework.
 - **[`unittest`](https://docs.python.org/3/library/unittest.html)** – Unit testing.
 - **[`unittest.mock`](https://docs.python.org/3/library/unittest.mock.html)** – Mock API responses.
 
