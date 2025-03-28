@@ -1,5 +1,25 @@
-import click
+"""
+This script provides a command-line tool to check the health status of various services 
+(elasticsearch, kibana, logstash) and return a Nagios-compatible output.
+
+It uses the Nagios plugin framework to report the status of the services based on their 
+current health. The health check includes handling various errors, including connection 
+errors, timeouts, authentication errors, HTTP status errors, and unexpected errors.
+
+Usage:
+    $ python check_service.py --check <service> 
+                              --host <hostname> 
+                              --user <username> 
+                              --password <password>
+
+Services supported:
+    - elasticsearch
+    - kibana
+    - logstash
+"""
+
 import logging
+import click
 import nagiosplugin
 from src.services.base_service import BaseService
 from src.services.elasticsearch_service import ElasticsearchService
@@ -63,7 +83,7 @@ def check_service(check, host, user, password):
 
     check = nagiosplugin.Check(
         ServiceHealthResource(service_status),
-        ServiceHealthContext('service_health', custom_description)
+        ServiceHealthContext(custom_description=custom_description)
     )
     check.name = ''
     check.main()

@@ -1,15 +1,21 @@
 """
-HttpDriver module for sending HTTP requests with configurable timeout.
+HttpDriver module for sending HTTP requests with a configurable timeout.
 
-This module defines the `HttpDriver` class, which provides a simple
-interface for making HTTP requests while handling connection errors
-gracefully.
+This module defines the `HttpDriver` class, which provides a simple interface 
+for sending HTTP requests while gracefully handling connection errors, timeouts, 
+authentication failures, and unexpected HTTP issues.
 
 Classes:
-    HttpDriver: A simple HTTP driver for making requests with a configurable timeout.
+    HttpDriver: A simple HTTP driver for sending requests with a configurable timeout.
 
 Exceptions:
-    HttpDriverException: Raised when an HTTP connection error occurs.
+    HttpDriverException: Raised for general HTTP connection issues.
+    HttpConnectionError: Raised when a connection error occurs during an HTTP request.
+    HttpTimeoutError: Raised when the request times out.
+    HttpStatusError: Raised for HTTP errors (e.g., 4xx, 5xx status codes).
+    HttpUnexpectedError: Raised for any other unexpected HTTP errors not covered by specific 
+    exceptions.
+    HttpAuthenticationError: Raised when authentication fails (e.g., 401 Unauthorized).
 """
 
 import logging
@@ -33,6 +39,9 @@ class HttpDriver():
     """
 
     def __init__(self) -> None:
+        """
+        Initializes the HttpDriver with the configured timeout and logger.
+        """
         self.timeout = Config.HTTP_TIMEOUT
         self.log = logging.getLogger(__name__)
 
@@ -49,7 +58,12 @@ class HttpDriver():
             requests.Response: The HTTP response object.
 
         Raises:
-            HttpDriverException: If a connection error occurs.
+            HttpDriverException: If a general HTTP connection error occurs.
+            HttpConnectionError: If a connection error occurs.
+            HttpTimeoutError: If a timeout occurs.
+            HttpAuthenticationError: If authentication fails (e.g., 401 Unauthorized).
+            HttpStatusError: If an HTTP status error occurs (e.g., 4xx, 5xx status codes).
+            HttpUnexpectedError: If an unexpected error occurs during the request.
         """
 
         kwargs.setdefault('timeout', self.timeout)
