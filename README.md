@@ -29,7 +29,7 @@ This project uses the following Python libraries:
 
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/service-monitoring-plugin.git
+git clone https://github.com/AzraelG/service-monitoring-plugin.git
 cd service-monitoring-plugin
 
 # Create a virtual environment
@@ -63,18 +63,7 @@ pytest tests/unit
 
 ## Icinga2 Integration
 
-To integrate with **Icinga2**, add a custom command definition:
-```sh
-object CheckCommand "service_health" {
-    command = [ "/usr/bin/python3", "/path/to/service-monitoring-plugin/src/check_services.py" ]
-    arguments = {
-        "--service" = "$service_name$"
-        "--endpoint" = "$service_endpoint$"
-        "--user" = "$service_user$"
-        "--password" = "$service_password$"
-    }
-}
-```
+To integrate with Icinga2, you can refer to the examples provided in the [icinga2_integration](icinga2_integration) folder. This folder contains configuration templates and sample scripts to help set up automated service checks in your Icinga2 monitoring system.
 
 ## License
 
