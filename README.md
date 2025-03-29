@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 Run the service check script with:
 ```sh
-python3 src/check_services.py --service elasticsearch --endpoint https://localhost:9200 --user elastic --password changeme
+python3 src/check_services.py --check elasticsearch --endpoint https://localhost:9200 --user elastic --password changeme
 ```
 ## Health Check Endpoints
 
