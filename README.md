@@ -63,9 +63,7 @@ pytest tests/unit
 
 ## Icinga2 Integration
 
-## Icinga2 Integration
-
-To integrate with Icinga2, you can refer to the examples provided in the `icinga2_integration` folder. This folder contains configuration templates and sample scripts to help set up automated service checks in your Icinga2 monitoring system.
+To integrate with Icinga2, you can refer to the examples provided in the [icinga2_integration](icinga2_integration) folder. This folder contains configuration templates and sample scripts to help set up automated service checks in your Icinga2 monitoring system.
 
 ## License
 
